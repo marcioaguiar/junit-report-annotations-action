@@ -88,7 +88,7 @@ const fs = require('fs');
             start_column: 0,
             end_column: 0,
             annotation_level,
-            message: `Junit Results ran ${numTests} in ${testDuration} seconds ${numErrored} Errored, ${numFailed} Failed, ${numSkipped} Skipped`,
+            message: `Test suite ran ${numTests} in ${testDuration} seconds ${numErrored} Errored, ${numFailed} Failed, ${numSkipped} Skipped`,
           };
         // const annotation = {
         //   path: 'test',
@@ -103,9 +103,9 @@ const fs = require('fs');
 
         const update_req = {
             ...github.context.repo,
-            github.run_id,
+            check_run_id: github.run_id,
             output: {
-                title: "Junit Results",
+                title: "Test Results",
                 summary: `Num passed etc`,
                 annotations: [annotation, ...annotations]
             }
