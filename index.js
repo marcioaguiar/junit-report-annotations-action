@@ -16,6 +16,7 @@ const fs = require('fs');
         const numFailures = core.getInput('numFailures');
         const accessToken = core.getInput('access-token');
         const testSrcPath = core.getInput('testSrcPath');
+        const check_name = core.getInput('job-name');
         const globber = await glob.create(path, {followSymbolicLinks: false});
 
         let numTests = 0;
@@ -82,7 +83,7 @@ const fs = require('fs');
         
         const req = {
           ...github.context.repo,
-          check_name: "Compile Scala-AM",
+          check_name,
           ref: github.context.sha
         }
         const res = await octokit.checks.listForRef(req);
