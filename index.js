@@ -80,6 +80,15 @@ const fs = require('fs');
 
         const octokit = new github.GitHub(accessToken);
         
+        const req = {
+          ...github.context.repo,
+          check_name: "Compile Scala-AM",
+          ref: github.context.sha
+        }
+        const res = await octokit.checks.listForRef(req);
+
+        const check_run_id = res.data.check_runs[0].id
+        
         const annotation_level = numFailed + numErrored > 0 ?'failure': 'notice';
         const annotation = {
             path: 'test',
@@ -103,7 +112,7 @@ const fs = require('fs');
 
         const update_req = {
             ...github.context.repo,
-            check_run_id: github.context.run_id,
+            check_run_id,
             output: {
                 title: "Test Results",
                 summary: `Num passed etc`,
