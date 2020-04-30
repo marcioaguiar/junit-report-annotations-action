@@ -106,6 +106,7 @@ TEST SUMMARY (ran ${numTests} tests in ${testDuration}s):
             output: {
                 title: "Test Results",
                 summary: `Num passed etc`,
+                text: "Is this visible anywhere?",
                 annotations: [annotation, ...annotations]
             }
         }
