@@ -41,27 +41,29 @@ const fs = require('fs');
                 testFunction = async testcase => {
                     if(testcase.failure) {
                         if(annotations.length < numFailures) {
-                            const klass = testcase.classname.replace(/$.*/g, '').replace(/\./g, '/');
-                            const path = `${testSrcPath}${klass}.java`
-
-                            const file = await fs.promises.readFile(path, {encoding: 'utf-8'});
-                            //TODO: make this better won't deal with methods with arguments etc
+                            const file = await fs.promises.readFile(testSrcPath, {encoding: 'utf-8'});
+                            //TODO: make this better
                             let line = 0;
+                            let index = 0;
+                            const splitted = testcase.classname.split(".")
+                            const name = splitted[splitted.length-1]
                             const lines = file.split('\n')
-                                for(let i = 0; i < lines.length; i++) {
-                                if(lines[i].indexOf(testcase.name) >= 0) {
+                            for(let i = 0; i < lines.length; i++) {
+                                let j = lines[i].indexOf(name)
+                                if(j >= 0) {
                                     line = i;
+                                    index = j;
                                     break;
                                 }
                             }
                             annotations.push({
-                                path: path,
+                                path: testSrcPath,
                                 start_line: line,
                                 end_line: line,
-                                start_column: 0,
-                                end_column: 0,
+                                start_column: index,
+                                end_column: index + name.length,
                                 annotation_level: 'failure',
-                                message: `Junit test ${testcase.name} failed ${testcase.failure.message}`,
+                                message: `${testcase.name} failed with:\n ${testcase.failure.message}`,
                               });
                         }
                         //add
