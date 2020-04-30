@@ -93,11 +93,11 @@ const fs = require('fs');
             end_column: 0,
             annotation_level,
             message: `
-                TEST SUMMARY (ran ${numTests} tests in ${testDuration}s): 
-                - Successful: ${numTests - numErrored - numFailed}
-                - Failed: ${numFailed}
-                - Errored: ${numErrored}
-            `
+TEST SUMMARY (ran ${numTests} tests in ${testDuration}s): 
+  - Successful: ${numTests - numErrored - numFailed}
+  - Failed: ${numFailed}
+  - Errored: ${numErrored}
+`
           };
 
         const update_req = {
