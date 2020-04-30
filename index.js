@@ -4,11 +4,6 @@ const glob = require('@actions/glob');
 const parser = require('xml2json');
 const fs = require('fs');
 
-
-
-
-
-
 (async () => {
     try {
         const path = core.getInput('path');
@@ -20,14 +15,12 @@ const fs = require('fs');
         const globber = await glob.create(path, {followSymbolicLinks: false});
 
         let numTests = 0;
-        let numSkipped = 0;
         let numFailed = 0;
         let numErrored = 0;
         let testDuration = 0;
 
         let annotations = [];
        
-
         for await (const file of globber.globGenerator()) {
             const data = await fs.promises.readFile(file);
             var json = JSON.parse(parser.toJson(data));
@@ -37,7 +30,6 @@ const fs = require('fs');
                 numTests +=  Number(testsuite.tests);
                 numErrored +=  Number(testsuite.errors);
                 numFailed +=  Number(testsuite.failures);
-                numSkipped +=  Number(testsuite.skipped);
                 testFunction = async testcase => {
                     if(testcase.failure) {
                         if(annotations.length < numFailures) {
@@ -94,24 +86,19 @@ const fs = require('fs');
         
         const annotation_level = numFailed + numErrored > 0 ?'failure': 'notice';
         const annotation = {
-            path: 'test',
+            path: testSrcPath,
             start_line: 0,
             end_line: 0,
             start_column: 0,
             end_column: 0,
             annotation_level,
-            message: `Test suite ran ${numTests} in ${testDuration} seconds ${numErrored} Errored, ${numFailed} Failed, ${numSkipped} Skipped`,
+            message: `
+                TEST SUMMARY (ran ${numTests} tests in ${testDuration}s): 
+                - Successful: ${numTests - numErrored - numFailed}
+                - Failed: ${numFailed}
+                - Errored: ${numErrored}
+            `
           };
-        // const annotation = {
-        //   path: 'test',
-        //   start_line: 1,
-        //   end_line: 1,
-        //   start_column: 2,
-        //   end_column: 2,
-        //   annotation_level,
-        //   message: `[500] failure`,
-        // };
-
 
         const update_req = {
             ...github.context.repo,
