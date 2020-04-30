@@ -79,7 +79,7 @@ const fs = require('fs');
         }
 
         const octokit = new github.GitHub(accessToken);
-    
+        
         const annotation_level = numFailed + numErrored > 0 ?'failure': 'notice';
         const annotation = {
             path: 'test',
@@ -103,7 +103,7 @@ const fs = require('fs');
 
         const update_req = {
             ...github.context.repo,
-            check_run_id: github.run_id,
+            check_run_id: github.context.run_id,
             output: {
                 title: "Test Results",
                 summary: `Num passed etc`,
